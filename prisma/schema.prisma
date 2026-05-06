@@ -1,0 +1,98 @@
+// Schema Prisma — Sistema de Achados e Perdidos UTFPR
+// Observação: SQLite não suporta enums nativos. Os campos a seguir armazenam
+// valores em String e são validados pela camada de aplicação (Zod + tipos TS).
+//
+// Valores aceitos:
+//   Role           → "USER" | "ADMIN"
+//   ItemType       → "PERDIDO" | "ENCONTRADO"
+//   ItemCategory   → "ELETRONICOS" | "DOCUMENTOS" | "VESTUARIO" | "OUTROS"
+//   ItemStatus     → "PERDIDO" | "ENCONTRADO" | "EM_VERIFICACAO" | "DEVOLVIDO"
+//   ClaimStatus    → "PENDENTE" | "APROVADA" | "RECUSADA"
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+
+  items         Item[]      @relation("AuthorItems")
+  comments      Comment[]
+  claims        Claim[]
+  statusChanges StatusLog[] @relation("ChangedByUser")
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String
+  category    String
+  location    String?
+  photoUrl    String
+  status      String
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author     User        @relation("AuthorItems", fields: [authorId], references: [id], onDelete: Cascade)
+  comments   Comment[]
+  claims     Claim[]
+  statusLogs StatusLog[]
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  text      String
+  itemId    String
+  authorId  String
+  createdAt DateTime @default(now())
+
+  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
+
+model Claim {
+  id            String   @id @default(cuid())
+  description   String
+  proofImageUrl String?
+  itemId        String
+  claimantId    String
+  status        String   @default("PENDENTE")
+  createdAt     DateTime @default(now())
+
+  item     Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  claimant User @relation(fields: [claimantId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
+
+model StatusLog {
+  id             String   @id @default(cuid())
+  itemId         String
+  previousStatus String?
+  newStatus      String
+  changedById    String
+  createdAt      DateTime @default(now())
+
+  item      Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  changedBy User @relation("ChangedByUser", fields: [changedById], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
