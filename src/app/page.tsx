@@ -6,8 +6,6 @@ import {
   formatDateTime,
   statusColor,
   statusLabel,
-  typeColor,
-  typeLabel,
 } from "@/lib/utils";
 import HomeFilters from "@/components/HomeFilters";
 
@@ -99,9 +97,6 @@ export default async function HomePage({
                   </div>
                   <div className="p-4">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className={"badge " + typeColor[item.type]}>
-                        {typeLabel[item.type]}
-                      </span>
                       <span className={"badge " + statusColor[item.status]}>
                         {statusLabel[item.status]}
                       </span>

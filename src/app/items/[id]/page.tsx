@@ -82,16 +82,25 @@ export default async function ItemDetailsPage({
           />
         </div>
         <div className="p-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={"badge " + typeColor[item.type]}>
-              {typeLabel[item.type]}
-            </span>
-            <span className={"badge " + statusColor[item.status]}>
-              {statusLabel[item.status]}
-            </span>
-            <span className="badge bg-slate-100 text-slate-700 border-slate-200">
-              {categoryLabel[item.category]}
-            </span>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-slate-500">Tipo:</span>
+              <span className={"badge " + typeColor[item.type]}>
+                {typeLabel[item.type]}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-slate-500">Status:</span>
+              <span className={"badge " + statusColor[item.status]}>
+                {statusLabel[item.status]}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-slate-500">Categoria:</span>
+              <span className="badge bg-slate-100 text-slate-700 border-slate-200">
+                {categoryLabel[item.category]}
+              </span>
+            </div>
           </div>
           <h1 className="mt-3 text-2xl font-bold text-slate-900">{item.title}</h1>
           <div className="mt-1 text-sm text-slate-500">
