@@ -1,0 +1,45 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# next.js
+.next/
+out/
+build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# prisma local DB
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/dev.db
+*.db
+*.db-journal
+
+# uploads (gerados pelo usuário em runtime — mantemos placeholder e .gitkeep)
+public/uploads/*
+!public/uploads/.gitkeep
+!public/uploads/placeholder.svg
