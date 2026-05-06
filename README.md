@@ -1,8 +1,8 @@
-# Sistema de Achados e Perdidos — UTFPR
+# Sistema de Achados e Perdidos UTFPR
 
-Sistema web completo para gerenciamento de **Achados e Perdidos** da UTFPR (Universidade Tecnológica Federal do Paraná). Permite o registro público de itens perdidos e encontrados, com fluxo de reivindicação, comentários, histórico de status e moderação por administradores.
+Sistema web para gerenciamento de Achados e Perdidos no campus da UTFPR. Permite o registro público de itens perdidos e encontrados, com comentários, fluxo de reivindicação, histórico de status e moderação por administradores.
 
-Construído com **Next.js (App Router) + TypeScript + Prisma + SQLite + NextAuth.js v5 + Tailwind CSS**.
+Stack: Next.js 14 (App Router) + TypeScript, Prisma + SQLite, NextAuth.js v5, Tailwind CSS.
 
 ---
 
@@ -72,19 +72,16 @@ O seed cria automaticamente os seguintes usuários:
 
 E **8 itens de exemplo** (2 Perdido, 2 Em verificação, 2 Encontrado, 2 Devolvido), 3 comentários e 1 reivindicação pendente.
 
-### Passo a passo de teste — fluxo completo
+### Passo a passo de teste
 
-1. **Login como usuário comum** (`usuario@utfpr.br` / `SenhaTeste123!`).
-2. Clique em **"+ Novo Registro"** e crie um item **Perdido** (ex.: "Carteira perdida na biblioteca"). Status inicial: *Perdido*.
-3. Crie um item **Encontrado** (ex.: "Pendrive encontrado no Lab 3"). Status inicial: *Em verificação*.
-4. Em qualquer item, abra os detalhes e clique no botão flutuante **"+ Adicionar Comentário"** — o comentário aparece sem recarregar a página.
-5. **Saia** e **entre como admin** (`admin@utfpr.br` / `SenhaTeste123!`). Como admin, você pode:
-   - Alterar o status de qualquer item (botão **Alterar status**).
-   - Excluir qualquer comentário (ícone de lixeira).
-   - Aprovar ou recusar reivindicações pendentes (seção que aparece nos detalhes do item).
-6. **Saia** e **entre como outro usuário** (cadastre-se em `/register`). Acesse o item Encontrado criado e clique em **Reivindicar**, descrevendo a posse e (opcionalmente) anexando uma imagem de prova.
-7. **Volte como admin** e abra o item — verá a seção **"Reivindicações Pendentes"**. Clique em **Aprovar**.
-8. Verifique que o status mudou para **Devolvido** e que esta mudança aparece no **Histórico de status** ao final da página.
+1. Login como usuário comum (`usuario@utfpr.br` / `SenhaTeste123!`).
+2. Clique em "+ Novo Registro" e crie um item Perdido (ex.: "Carteira perdida na biblioteca"). Status inicial: Perdido.
+3. Crie um item Encontrado (ex.: "Pendrive encontrado no Lab 3"). Status inicial: Em verificação.
+4. Abra um item nos detalhes e clique no botão flutuante "+ Adicionar Comentário". O comentário aparece sem recarregar a página.
+5. Saia e entre como admin (`admin@utfpr.br` / `SenhaTeste123!`). Como admin você pode alterar o status de qualquer item, excluir comentários e aprovar/recusar reivindicações.
+6. Saia, cadastre um novo usuário em `/register`, abra um item Encontrado e clique em "Reivindicar", descrevendo a posse e (opcional) anexando uma imagem de prova.
+7. Volte como admin, abra o item e em "Reivindicações Pendentes" clique em Aprovar.
+8. O status muda para Devolvido e a transição aparece no "Histórico de status" ao final da página.
 
 ---
 
@@ -92,20 +89,20 @@ E **8 itens de exemplo** (2 Perdido, 2 Em verificação, 2 Encontrado, 2 Devolvi
 
 ### Stack escolhida
 
-- **Next.js 14 (App Router) + TypeScript** — server components reduzem JS no cliente, permitem busca de dados direto no servidor (sem REST interna), e tipagem end-to-end com Prisma. App Router permite separar facilmente código de servidor e cliente.
-- **Prisma + SQLite** — execução local sem dependências externas. Migration e seed reproduzíveis. Para produção, basta trocar o `provider` em `prisma/schema.prisma` para `postgresql` ou `mysql` e ajustar o `DATABASE_URL`.
-- **NextAuth.js v5 (Auth.js)** com Credentials Provider — sessões JWT, CSRF e cookies seguros prontos. Custo zero para integrar.
-- **Tailwind CSS** + componentes utilitários (`btn-primary`, `card`, `badge`, etc.) — produtividade sem dependência de runtime de design system. shadcn/ui-style sem precisar do CLI.
-- **Zod** — validação dos payloads tanto no client quanto no server.
-- **bcryptjs** — hash de senhas (10 rounds).
+- **Next.js 14 (App Router) + TypeScript**: server components evitam round-trip de API interna e dão tipagem end-to-end com Prisma.
+- **Prisma + SQLite**: execução local sem dependências externas. Para produção basta trocar `provider` em `prisma/schema.prisma` para `postgresql`/`mysql` e ajustar `DATABASE_URL`.
+- **NextAuth.js v5 (Auth.js)** com Credentials Provider: sessões JWT e CSRF prontos.
+- **Tailwind CSS** com classes utilitárias customizadas (`btn-primary`, `card`, `badge`).
+- **Zod** para validação dos payloads no client e no server.
+- **bcryptjs** com 10 rounds para hash de senhas.
 
 ### Limitações conhecidas
 
-- **SQLite** não é adequado para produção com múltiplas instâncias ou alto volume de escrita concorrente. Usar PostgreSQL/MySQL nesse cenário.
-- **SQLite + Prisma** não suporta **enums nativos**: os campos enum-like (`role`, `type`, `category`, `status`) são armazenados como `String` e validados no app via Zod e tipos TS. Em PostgreSQL/MySQL, basta voltar a usar `enum`.
-- **Armazenamento local de uploads** em `public/uploads/` é simples mas **não funciona em ambientes com filesystem efêmero** (Vercel, Heroku, containers sem volume). Para produção, ver [seção 4](#4-como-alternar-storage).
-- **Geolocalização** preenche apenas coordenadas (lat/lng). Reverse geocoding requer integração com Google Maps/OpenStreetMap (não incluída).
-- **Autenticação por OAuth** (Google, Microsoft) não está incluída — apenas Credentials.
+- SQLite não é adequado para produção com múltiplas instâncias ou alto volume de escrita concorrente. Usar PostgreSQL/MySQL nesse cenário.
+- Prisma + SQLite não suporta enums nativos. Os campos `role`, `type`, `category`, `status` são `String` validados via Zod. Em PostgreSQL/MySQL basta voltar a usar `enum`.
+- Uploads em `public/uploads/` não funcionam em filesystem efêmero (Vercel/Heroku). Ver [seção 4](#4-como-alternar-storage).
+- Geolocalização preenche apenas coordenadas. Reverse geocoding (endereço legível) não está incluído.
+- Autenticação só por Credentials. OAuth (Google, Microsoft) não está incluído.
 
 ### Trade-offs
 
@@ -207,7 +204,7 @@ O upload local fica em `src/lib/upload.ts`. Para migrar para **S3/Supabase Stora
    }
    ```
 
-A interface `saveUploadedImage(file: File): Promise<string>` é a mesma — basta trocar a implementação. Nada mais no código precisa mudar.
+A assinatura `saveUploadedImage(file: File): Promise<string>` continua a mesma. Nada mais precisa mudar.
 
 ---
 
@@ -221,9 +218,9 @@ Lista paginada (9 itens por página), ordenada do mais recente para o mais antig
 
 **Query params:**
 
-- `status` — `PERDIDO` | `ENCONTRADO` | `EM_VERIFICACAO` | `DEVOLVIDO`
-- `category` — `ELETRONICOS` | `DOCUMENTOS` | `VESTUARIO` | `OUTROS`
-- `page` — número (default `1`)
+- `status`: `PERDIDO`, `ENCONTRADO`, `EM_VERIFICACAO` ou `DEVOLVIDO`
+- `category`: `ELETRONICOS`, `DOCUMENTOS`, `VESTUARIO` ou `OUTROS`
+- `page`: número, default `1`
 
 **Exemplo de request:**
 
@@ -327,14 +324,14 @@ curl "http://localhost:3000/api/items/cmoulf5pq000v3qu0v50w0vg9"
 Conteúdo do `.env.example`:
 
 ```env
-# Banco de dados (SQLite local — para produção, troque por PostgreSQL/MySQL)
+# Banco SQLite local. Para produção troque por PostgreSQL/MySQL.
 DATABASE_URL="file:./dev.db"
 
-# NextAuth.js — gere com: openssl rand -base64 32
+# NextAuth: gere com "openssl rand -base64 32"
 AUTH_SECRET="troque-este-valor-por-um-segredo-de-32-bytes-em-base64"
 AUTH_URL="http://localhost:3000"
 
-# Diretório local de uploads (relativo ao projeto)
+# Diretório local de uploads
 UPLOAD_DIR="public/uploads"
 ```
 
@@ -420,4 +417,4 @@ Para produção/S3, ver [seção 4](#4-como-alternar-storage).
 
 ## Licença
 
-Projeto acadêmico — uso livre para fins educacionais.
+Projeto acadêmico, uso livre para fins educacionais.

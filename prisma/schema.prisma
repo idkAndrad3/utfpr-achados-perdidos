@@ -1,14 +1,3 @@
-// Schema Prisma — Sistema de Achados e Perdidos UTFPR
-// Observação: SQLite não suporta enums nativos. Os campos a seguir armazenam
-// valores em String e são validados pela camada de aplicação (Zod + tipos TS).
-//
-// Valores aceitos:
-//   Role           → "USER" | "ADMIN"
-//   ItemType       → "PERDIDO" | "ENCONTRADO"
-//   ItemCategory   → "ELETRONICOS" | "DOCUMENTOS" | "VESTUARIO" | "OUTROS"
-//   ItemStatus     → "PERDIDO" | "ENCONTRADO" | "EM_VERIFICACAO" | "DEVOLVIDO"
-//   ClaimStatus    → "PENDENTE" | "APROVADA" | "RECUSADA"
-
 generator client {
   provider = "prisma-client-js"
 }
