@@ -77,11 +77,11 @@ E **8 itens de exemplo** (2 Perdido, 2 Em verificação, 2 Encontrado, 2 Devolvi
 1. Login como usuário comum (`usuario@utfpr.br` / `SenhaTeste123!`).
 2. Clique em "+ Novo Registro" e crie um item Perdido (ex.: "Carteira perdida na biblioteca"). Status inicial: Perdido.
 3. Crie um item Encontrado (ex.: "Pendrive encontrado no Lab 3"). Status inicial: Em verificação.
-4. Abra um item nos detalhes e clique no botão flutuante "+ Adicionar Comentário". O comentário aparece sem recarregar a página.
-5. Saia e entre como admin (`admin@utfpr.br` / `SenhaTeste123!`). Como admin você pode alterar o status de qualquer item, excluir comentários e aprovar/recusar reivindicações.
-6. Saia, cadastre um novo usuário em `/register`, abra um item Encontrado e clique em "Reivindicar", descrevendo a posse e (opcional) anexando uma imagem de prova.
-7. Volte como admin, abra o item e em "Reivindicações Pendentes" clique em Aprovar.
-8. O status muda para Devolvido e a transição aparece no "Histórico de status" ao final da página.
+4. Abra qualquer item nos detalhes e use o botão flutuante "+ Adicionar Comentário". O comentário aparece sem recarregar a página.
+5. Ainda como `usuario`, abra um item Encontrado autorado pelo admin (ex.: "Calculadora HP 12C") e clique em "Reivindicar". Preencha a descrição e (opcional) anexe uma imagem de prova.
+6. Saia e entre como admin (`admin@utfpr.br` / `SenhaTeste123!`).
+7. Abra o item reivindicado. Na seção "Reivindicações Pendentes", clique em Aprovar.
+8. O status muda para Devolvido e a transição aparece no "Histórico de status" ao final da página. Como admin você também pode alterar status manualmente e excluir comentários.
 
 ---
 
@@ -338,9 +338,15 @@ UPLOAD_DIR="public/uploads"
 | Variável        | Obrigatória | Descrição                                                                |
 | --------------- | ----------- | ------------------------------------------------------------------------ |
 | `DATABASE_URL`  | Sim         | URL de conexão do Prisma. Em SQLite: `file:./dev.db`.                    |
-| `AUTH_SECRET`   | Sim         | Segredo para assinar JWTs. Gere com `openssl rand -base64 32`.           |
+| `AUTH_SECRET`   | Sim         | Segredo para assinar JWTs. Como gerar abaixo.                            |
 | `AUTH_URL`      | Sim         | URL pública do app (ex.: `http://localhost:3000` em dev).                |
 | `UPLOAD_DIR`    | Não         | Diretório de uploads. Default: `public/uploads`.                         |
+
+#### Gerando o `AUTH_SECRET`
+
+- **Linux/macOS / Git Bash**: `openssl rand -base64 32`
+- **PowerShell**: `[Convert]::ToBase64String((1..32 | %{ Get-Random -Maximum 256 }))`
+- **Node.js**: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
 
 Para produção/S3, ver [seção 4](#4-como-alternar-storage).
 
@@ -412,6 +418,7 @@ Para produção/S3, ver [seção 4](#4-como-alternar-storage).
 - **Validação de upload**: mimetype (`image/jpeg` | `image/png`) e tamanho máximo de 5 MB no backend, mesmo se o frontend for contornado.
 - **Mensagens em português** sem expor detalhes internos. Logs de erro vão para `console.error` no servidor.
 - **Middleware** (`src/middleware.ts`) protege rotas que exigem login antes mesmo de chegar nas pages.
+- **Datas em UTC**: todos os timestamps (`createdAt`, `updatedAt`) são gravados em UTC pelo Prisma e formatados para o fuso local apenas na renderização.
 
 ---
 
